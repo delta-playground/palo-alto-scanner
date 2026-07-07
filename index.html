@@ -378,40 +378,34 @@
   }
 
   // ==========================================
-  // COMUNICACIÓN CON LA API DE GOOGLE
+  // COMUNICACIÓN CON LA API DE GOOGLE (BLINDADA)
   // ==========================================
   async function llamarAPI(accion, payload) {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({ accion: accion, payload: payload })
-    });
-    return await response.json();
-  }
-
-  // --- LÓGICA REGULAR ---
-  async function buscarVendedor() {
-    const cod = document.getElementById('cod-maestro').value.trim();
-    if(!cod) return;
-    setLoader(true, "Consultando base...");
-    document.getElementById('error-box-reg').style.display = 'none';
-    
     try {
-      const res = await llamarAPI("buscarVendedor", { codigo: cod });
-      setLoader(false);
-      if(res.encontrado) {
-        sessionData = res;
-        document.getElementById('v-nombre').innerText = res.vendedor;
-        document.getElementById('v-canal').innerText = res.canal;
-        document.getElementById('v-zona').innerText = res.zona;
-        document.getElementById('reg-step-1').style.display = 'none';
-        document.getElementById('reg-step-2').style.display = 'block';
-      } else {
-        document.getElementById('error-box-reg').innerText = res.mensaje;
-        document.getElementById('error-box-reg').style.display = 'block';
+      const response = await fetch(API_URL, {
+        method: "POST",
+        // Esto evita que el navegador bloquee la petición por seguridad (CORS)
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({ accion: accion, payload: payload })
+      });
+      
+      // Leemos la respuesta de Google como texto primero
+      const textoRespuesta = await response.text(); 
+      
+      try {
+        // Intentamos convertirla a datos
+        return JSON.parse(textoRespuesta);
+      } catch (e) {
+        // Si falla, significa que Google nos mandó una página web (HTML)
+        console.error("Google respondió esto en lugar de datos:", textoRespuesta);
+        alert("Bloqueo de Google: Tu cuenta de correo corporativo está pidiendo iniciar sesión o el código en Apps Script no se actualizó correctamente.");
+        return { exito: false, mensaje: "Error de formato en la respuesta." };
       }
-    } catch(err) {
-      setLoader(false);
-      alert("Error conectando al servidor.");
+    } catch (err) {
+      alert("Falla de red: No se pudo alcanzar el servidor de Google.");
+      return { exito: false, mensaje: err.message };
     }
   }
 
