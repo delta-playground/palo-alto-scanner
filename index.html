@@ -303,14 +303,32 @@
   // ==========================================
   async function llamarAPI(accion, payload) {
     try {
-      const response = await fetch(API_URL, {
-        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ accion: accion, payload: payload })
+      // 1. Engañamos al navegador agregando la hora exacta a la URL 
+      // para que crea que siempre es una dirección diferente y no use memoria.
+      const urlSinCache = API_URL + "?t=" + new Date().getTime();
+
+      const response = await fetch(urlSinCache, {
+        method: "POST", 
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ accion: accion, payload: payload }),
+        // 2. Le ordenamos explícitamente al navegador que no guarde el historial de redirecciones de Google
+        cache: "no-store",
+        redirect: "follow"
       });
+      
       const textoRespuesta = await response.text(); 
-      try { return JSON.parse(textoRespuesta); } 
-      catch (e) { alert("Bloqueo de Google: Error de formato en la respuesta."); return { exito: false, mensaje: "Error de formato." }; }
-    } catch (err) { alert("Falla de red: No se pudo alcanzar el servidor de Google."); return { exito: false, mensaje: err.message }; }
+      
+      try { 
+        return JSON.parse(textoRespuesta); 
+      } catch (e) { 
+        console.error("HTML devuelto por Google:", textoRespuesta);
+        alert("Bloqueo temporal: Tu navegador intentó usar un caché caducado. Intenta de nuevo."); 
+        return { exito: false, mensaje: "Error de formato." }; 
+      }
+    } catch (err) { 
+      alert("Falla de red: No se pudo alcanzar el servidor de Google."); 
+      return { exito: false, mensaje: err.message }; 
+    }
   }
 
   // ==========================================
