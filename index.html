@@ -121,16 +121,17 @@
 </head>
 <body>
 
+
+  <div id="toast-notificacion" style="position: fixed; top: -50px; left: 50%; transform: translateX(-50%); background: #16A34A; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 15px; opacity: 0; transition: all 0.3s ease; z-index: 999999 !important; pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,0.5); text-align: center; white-space: nowrap;">
+    ✅ SIM Guardado
+  </div>
+
   <div class="overlay" id="global-loader">
     <div class="spinner"></div>
     <p id="loader-text">Procesando...</p>
   </div>
 
   <div id="scanner-modal">
-
-    <div id="toast-notificacion" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: #16A34A; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 99999; pointer-events: none; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center; white-space: nowrap;">
-      ✅ SIM Guardado
-    </div>
 
 
     <div id="reader-live">
@@ -505,19 +506,26 @@
 
 
 
-// Función para mostrar el aviso flotante sin frenar la cámara
+/// ==========================================
+  // NOTIFICACIÓN FLOTANTE (ANTI-RÁFAGAS)
+  // ==========================================
+  let toastTimeout; // Variable global para controlar el tiempo
+
   function mostrarToast(mensaje, color) {
     const toast = document.getElementById('toast-notificacion');
     toast.innerHTML = mensaje;
     toast.style.background = color;
     toast.style.opacity = '1';
-    toast.style.top = '40px'; // Efecto de bajada
+    toast.style.top = '60px'; // Lo bajamos hacia la pantalla
     
-    // Se oculta automáticamente después de 1.2 segundos
-    setTimeout(() => {
+    // Si el vendedor escanea otro SIM rápido, cancelamos el ocultamiento anterior
+    if (toastTimeout) clearTimeout(toastTimeout);
+    
+    // Lo ocultamos después de 1.5 segundos
+    toastTimeout = setTimeout(() => {
       toast.style.opacity = '0';
-      toast.style.top = '10px';
-    }, 1200);
+      toast.style.top = '-50px'; // Lo devolvemos hacia arriba
+    }, 1500);
   }
 
 
