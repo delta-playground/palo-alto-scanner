@@ -528,6 +528,9 @@
  // Variable global para saber en qué pantalla abrieron la cámara
   let modoEscanerActivo = 'rutas'; 
 
+  // Variable global para saber en qué pantalla abrieron la cámara
+  let modoEscanerActivo = 'rutas'; 
+
   // ==========================================
   // ESCÁNER EN VIVO MULTI-USO
   // ==========================================
@@ -571,7 +574,11 @@
     ).catch(err => { alert("Permiso Denegado."); cerrarScannerVivo(); });
   }
 
-// Validar y limpiar el número de teléfono mientras escriben
+  // ==========================================
+  // LÓGICA DE ACTIVACIÓN REGULAR 
+  // ==========================================
+  
+  // Validar y limpiar el número de teléfono mientras escriben
   document.getElementById('reg-tel').addEventListener('input', function (e) {
     let valor = e.target.value.replace(/\D/g, '');
     if (valor.length > 8) valor = valor.slice(0, 8);
@@ -585,8 +592,6 @@
     const btn = document.getElementById('btn-save-reg');
     if (sim.length >= 15 && tel.length === 8) { btn.disabled = false; } else { btn.disabled = true; }
   }
-
-
 
   function cerrarScannerVivo() {
     if (html5QrcodeScannerLive && html5QrcodeScannerLive.isScanning) {
