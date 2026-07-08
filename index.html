@@ -227,7 +227,7 @@
   // ==========================================
   // CONFIGURACIÓN DE LA API
   // ==========================================
-  const API_URL = "https://script.google.com/macros/s/AKfycbwfkIIgV2n-KCI1RjpvKnavg4_sjYjhjmtlBZrpU8c5bpeGNqhvtsO7wW19SXh5UjOW/exec";
+  const API_URL = "https://script.google.com/a/macros/paloaltohn.com/s/AKfycbwgFYzjUanpl8sork-M99ApSUKtb7MiMgOXHOg1SICRQzhIegz7WrTaLcmUJQa69e6D/exec";
 
   let sessionData = {};
   let simsEscaneados = [];
@@ -264,8 +264,32 @@
 
   function abrirFlujo(flujo) {
     document.getElementById('menu-view').style.display = 'none';
-    if(flujo === 'regular') document.getElementById('regular-view').style.display = 'block';
-    else document.getElementById('rutas-view').style.display = 'block';
+    
+    if (flujo === 'regular') {
+      // 1. Limpieza radical del flujo Guerrilla
+      document.getElementById('reg-step-2').style.display = 'none'; 
+      document.getElementById('reg-step-1').style.display = 'block';
+      document.getElementById('cod-maestro').value = ""; 
+      document.getElementById('reg-sim').value = ""; 
+      document.getElementById('reg-tel').value = "";
+      document.getElementById('error-box-reg').style.display = 'none';
+      document.getElementById('btn-save-reg').disabled = true; 
+      sessionData = {}; // Destruye la memoria del vendedor anterior
+      
+      document.getElementById('regular-view').style.display = 'block';
+    } else {
+      // 2. Limpieza radical del flujo Rutas
+      document.getElementById('ruta-negocio').value = ""; 
+      document.getElementById('ruta-pos').value = ""; 
+      document.getElementById('ruta-zona').value = "";
+      document.getElementById('ruta-numero').innerHTML = '<option value="">Seleccione...</option>';
+      document.getElementById('ruta-numero').disabled = true;
+      document.getElementById('error-box-rutas').style.display = 'none';
+      simsEscaneados = []; // Destruye la lista de chips anterior
+      actualizarListaSims();
+      
+      document.getElementById('rutas-view').style.display = 'block';
+    }
   }
 
   function volverMenu() {
