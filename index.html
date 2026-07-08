@@ -127,6 +127,12 @@
   </div>
 
   <div id="scanner-modal">
+
+    <div id="toast-notificacion" style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: #16A34A; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 14px; opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); z-index: 99999; pointer-events: none; box-shadow: 0 4px 15px rgba(0,0,0,0.4); text-align: center; white-space: nowrap;">
+      ✅ SIM Guardado
+    </div>
+
+
     <div id="reader-live">
       <div class="scanner-overlay-frame" id="scanner-frame"></div>
     </div>
@@ -497,6 +503,24 @@
     e.target.setSelectionRange(start, end);
   });
 
+
+
+// Función para mostrar el aviso flotante sin frenar la cámara
+  function mostrarToast(mensaje, color) {
+    const toast = document.getElementById('toast-notificacion');
+    toast.innerHTML = mensaje;
+    toast.style.background = color;
+    toast.style.opacity = '1';
+    toast.style.top = '40px'; // Efecto de bajada
+    
+    // Se oculta automáticamente después de 1.2 segundos
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.top = '10px';
+    }, 1200);
+  }
+
+
   // ==========================================
   // ESCÁNER EN VIVO (MODAL)
   // ==========================================
@@ -521,25 +545,32 @@
         if (/^89\d{15,19}$/.test(decodedText)) {
           if (decodedText !== ultimoSimEscaneado) {
             ultimoSimEscaneado = decodedText;
+            
             if (!simsEscaneados.includes(decodedText)) {
               playBeep();
               simsEscaneados.push(decodedText);
               actualizarListaSims();
               
-              // Animación visual verde
+              // Extraemos los últimos 4 dígitos para darle confianza al vendedor
+              const ultimos4 = decodedText.slice(-4);
+              mostrarToast(`✅ Registrado: ...${ultimos4}`, "#16A34A"); // Verde
+              
+              // Animación visual del marco
               const frame = document.getElementById('scanner-frame');
               frame.style.borderColor = "#FFF";
               frame.style.backgroundColor = "rgba(255,255,255,0.3)";
               setTimeout(() => {
                 frame.style.borderColor = "#00FF00";
                 frame.style.backgroundColor = "transparent";
-                ultimoSimEscaneado = "";
+                ultimoSimEscaneado = ""; // Liberamos para el siguiente escaneo
               }, 800);
             } else {
-              // Animación visual roja (Duplicado)
+              // Si ya lo había escaneado, le avisamos en rojo
+              mostrarToast(`⚠️ Ya escaneado`, "#DC2626"); // Rojo
+              
               const frame = document.getElementById('scanner-frame');
               frame.style.borderColor = "red";
-              setTimeout(() => { frame.style.borderColor = "#00FF00"; }, 500);
+              setTimeout(() => { frame.style.borderColor = "#00FF00"; ultimoSimEscaneado = ""; }, 800);
             }
           }
         }
