@@ -199,20 +199,25 @@
 
       <div id="reg-step-2" style="display: none;">
         <div class="vendedor-badge"><h3 id="v-nombre">---</h3><p><strong>Canal:</strong> <span id="v-canal">---</span></p><p><strong>Zona:</strong> <span id="v-zona">---</span></p></div>
+        
         <div class="campo">
-          <label>Captura de Pantalla</label>
-          <div class="upload-box">
-            <input type="file" id="file-input-reg" accept="image/*" onchange="handleFileRegular(event)">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--texto-3); margin-bottom: 8px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-            <p style="font-size: 13px; font-weight: 600; color: var(--texto-2);">Subir Captura</p>
+          <label>1. Número de SIM (Escáner)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="reg-sim" placeholder="Toca el botón para escanear 👉" readonly style="flex: 1; background: var(--bg-4); font-family: 'JetBrains Mono'; font-size: 12px;">
+            <button class="btn btn-secondary" style="width: auto; margin-top: 0; border: 1px solid var(--naranja); color: var(--naranja); padding: 0 15px;" onclick="abrirScannerVivo('regular')">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            </button>
           </div>
-          <img id="img-preview-reg" src="">
         </div>
+
+        <div class="campo">
+          <label>2. Teléfono Asignado (8 dígitos)</label>
+          <input type="text" id="reg-tel" placeholder="Ej: 98765432" inputmode="numeric">
+        </div>
+
         <button class="btn btn-primary" id="btn-save-reg" onclick="guardarRegular()" disabled>Registrar Activación</button>
         <button class="btn btn-secondary" onclick="cancelarRegular()">Cancelar</button>
       </div>
-      <div class="msg-error" id="error-box-reg"></div>
-    </div>
 
     <div id="success-view" style="display: none;">
       <div class="check-circle"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
@@ -267,7 +272,7 @@
             <span id="contador-badge" style="background: var(--naranja); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px;">0 SIMs</span>
           </label>
           
-          <button class="btn btn-secondary" style="border: 1px solid var(--naranja); color: var(--naranja);" onclick="abrirScannerVivo()">
+          <button class="btn btn-secondary" style="border: 1px solid var(--naranja); color: var(--naranja);" onclick="abrirScannerVivo('rutas')">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg>
             Abrir Cámara en Vivo
           </button>
@@ -430,13 +435,12 @@
   }
 
   async function guardarRegular() {
-    setLoader(true, "Procesando captura...");
+    setLoader(true, "Registrando activación...");
     const payload = { 
       codigoMaestro: document.getElementById('cod-maestro').value.trim(), 
-      vendedor: sessionData.vendedor, 
-      zona: sessionData.zona, 
-      canal: sessionData.canal, 
-      imagenBase64: currentBase64Regular 
+      vendedor: sessionData.vendedor, zona: sessionData.zona, canal: sessionData.canal, 
+      sim: document.getElementById('reg-sim').value, 
+      telefono: document.getElementById('reg-tel').value 
     };
     
     try {
@@ -451,27 +455,19 @@
         document.getElementById('error-box-reg').innerText = res.mensaje;
         document.getElementById('error-box-reg').style.display = 'block';
       }
-    } catch(err) {
-      setLoader(false);
-      alert("Error conectando al servidor.");
-    }
+    } catch(err) { setLoader(false); alert("Error conectando al servidor."); }
   }
 
   function cancelarRegular() {
-    document.getElementById('reg-step-2').style.display = 'none';
-    document.getElementById('reg-step-1').style.display = 'block';
-    document.getElementById('cod-maestro').value = "";
-    document.getElementById('img-preview-reg').style.display = 'none';
-    document.getElementById('btn-save-reg').disabled = true;
-    currentBase64Regular = ""; sessionData = {};
+    document.getElementById('reg-step-2').style.display = 'none'; document.getElementById('reg-step-1').style.display = 'block';
+    document.getElementById('cod-maestro').value = ""; document.getElementById('reg-sim').value = ""; document.getElementById('reg-tel').value = "";
+    document.getElementById('btn-save-reg').disabled = true; sessionData = {};
   }
 
   function nuevaVentaRegular() {
-    document.getElementById('success-view').style.display = 'none';
-    document.getElementById('regular-view').style.display = 'block';
-    document.getElementById('img-preview-reg').style.display = 'none';
+    document.getElementById('success-view').style.display = 'none'; document.getElementById('regular-view').style.display = 'block';
+    document.getElementById('reg-sim').value = ""; document.getElementById('reg-tel').value = "";
     document.getElementById('btn-save-reg').disabled = true;
-    currentBase64Regular = "";
   }
 
   // --- LÓGICA RUTAS ---
@@ -529,65 +525,68 @@
   }
 
 
+ // Variable global para saber en qué pantalla abrieron la cámara
+  let modoEscanerActivo = 'rutas'; 
+
   // ==========================================
-  // ESCÁNER EN VIVO (MODAL)
+  // ESCÁNER EN VIVO MULTI-USO
   // ==========================================
-  function abrirScannerVivo() {
+  function abrirScannerVivo(modo) {
+    modoEscanerActivo = modo; // Guardamos si es 'rutas' o 'regular'
     document.getElementById('scanner-modal').style.display = 'flex';
     
-    if (!html5QrcodeScannerLive) {
-      html5QrcodeScannerLive = new Html5Qrcode("reader-live");
-    }
+    if (!html5QrcodeScannerLive) { html5QrcodeScannerLive = new Html5Qrcode("reader-live"); }
+    const config = { fps: 15, qrbox: { width: 250, height: 100 }, formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_128 ], aspectRatio: window.innerHeight / window.innerWidth };
 
-    const config = { 
-      fps: 15, 
-      qrbox: { width: 250, height: 100 }, 
-      formatsToSupport: [ Html5QrcodeSupportedFormats.CODE_128 ],
-      aspectRatio: window.innerHeight / window.innerWidth
-    };
-
-    html5QrcodeScannerLive.start(
-      { facingMode: currentFacingMode }, 
-      config, 
-      (decodedText) => {
+    html5QrcodeScannerLive.start({ facingMode: currentFacingMode }, config, (decodedText) => {
         if (/^89\d{15,19}$/.test(decodedText)) {
           if (decodedText !== ultimoSimEscaneado) {
             ultimoSimEscaneado = decodedText;
             
-            if (!simsEscaneados.includes(decodedText)) {
+            // SI ESTAMOS EN LA ACTIVACIÓN REGULAR (GUERRILLAS)
+            if (modoEscanerActivo === 'regular') {
               playBeep();
-              simsEscaneados.push(decodedText);
-              actualizarListaSims();
-              
-              // Extraemos los últimos 4 dígitos para darle confianza al vendedor
-              const ultimos4 = decodedText.slice(-4);
-              mostrarToast(`✅ Registrado: ...${ultimos4}`, "#16A34A"); // Verde
-              
-              // Animación visual del marco
-              const frame = document.getElementById('scanner-frame');
-              frame.style.borderColor = "#FFF";
-              frame.style.backgroundColor = "rgba(255,255,255,0.3)";
-              setTimeout(() => {
-                frame.style.borderColor = "#00FF00";
-                frame.style.backgroundColor = "transparent";
-                ultimoSimEscaneado = ""; // Liberamos para el siguiente escaneo
-              }, 800);
-            } else {
-              // Si ya lo había escaneado, le avisamos en rojo
-              mostrarToast(`⚠️ Ya escaneado`, "#DC2626"); // Rojo
-              
-              const frame = document.getElementById('scanner-frame');
-              frame.style.borderColor = "red";
-              setTimeout(() => { frame.style.borderColor = "#00FF00"; ultimoSimEscaneado = ""; }, 800);
+              document.getElementById('reg-sim').value = decodedText;
+              validarFormularioRegular();
+              mostrarToast("✅ SIM Capturado", "#16A34A");
+              cerrarScannerVivo(); // Cerramos la cámara automático al capturar 1
+            } 
+            // SI ESTAMOS EN LAS RUTAS (RÁFAGA)
+            else {
+              if (!simsEscaneados.includes(decodedText)) {
+                playBeep(); simsEscaneados.push(decodedText); actualizarListaSims();
+                const ultimos4 = decodedText.slice(-4);
+                mostrarToast(`✅ Registrado: ...${ultimos4}`, "#16A34A");
+                const frame = document.getElementById('scanner-frame'); frame.style.borderColor = "#FFF"; frame.style.backgroundColor = "rgba(255,255,255,0.3)";
+                setTimeout(() => { frame.style.borderColor = "#00FF00"; frame.style.backgroundColor = "transparent"; ultimoSimEscaneado = ""; }, 800);
+              } else {
+                mostrarToast(`⚠️ Ya escaneado`, "#DC2626");
+                const frame = document.getElementById('scanner-frame'); frame.style.borderColor = "red";
+                setTimeout(() => { frame.style.borderColor = "#00FF00"; ultimoSimEscaneado = ""; }, 800);
+              }
             }
           }
         }
       }
-    ).catch(err => {
-      alert("Permiso Denegado: Asegúrate de darle a 'Permitir' para encender la cámara.");
-      cerrarScannerVivo();
-    });
+    ).catch(err => { alert("Permiso Denegado."); cerrarScannerVivo(); });
   }
+
+// Validar y limpiar el número de teléfono mientras escriben
+  document.getElementById('reg-tel').addEventListener('input', function (e) {
+    let valor = e.target.value.replace(/\D/g, '');
+    if (valor.length > 8) valor = valor.slice(0, 8);
+    e.target.value = valor;
+    validarFormularioRegular();
+  });
+
+  function validarFormularioRegular() {
+    const sim = document.getElementById('reg-sim').value;
+    const tel = document.getElementById('reg-tel').value;
+    const btn = document.getElementById('btn-save-reg');
+    if (sim.length >= 15 && tel.length === 8) { btn.disabled = false; } else { btn.disabled = true; }
+  }
+
+
 
   function cerrarScannerVivo() {
     if (html5QrcodeScannerLive && html5QrcodeScannerLive.isScanning) {
