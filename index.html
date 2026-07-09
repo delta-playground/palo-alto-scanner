@@ -3,13 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Activaciones de SimCard | Palo Alto</title>
+  <title>App Vendedores | Palo Alto</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
-    /* ══════════════════════════════
-       TOKENS VISUALES
-    ══════════════════════════════ */
     :root {
       --naranja:       #E8470A;
       --naranja-2:     #FF5C1A;
@@ -83,7 +80,6 @@
     .sim-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-3); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border: 1px solid var(--borde-2); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; animation: fadeIn 0.2s ease;}
     .btn-remove-sim { background: var(--rojo-dim); color: var(--rojo); border: none; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold;}
     
-    /* MODAL DE ESCÁNER EN VIVO */
     #scanner-modal { position: fixed; inset: 0; background: #000; z-index: 10000; display: none; flex-direction: column; }
     #reader-live { flex: 1; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #000;}
     #reader-live video { object-fit: cover !important; width: 100% !important; height: 100% !important; }
@@ -98,7 +94,7 @@
 <body>
 
   <div id="toast-notificacion" style="position: fixed; top: -50px; left: 50%; transform: translateX(-50%); background: #16A34A; color: white; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 15px; opacity: 0; transition: all 0.3s ease; z-index: 999999 !important; pointer-events: none; box-shadow: 0 6px 20px rgba(0,0,0,0.5); text-align: center; white-space: nowrap;">
-    ✅ SIM Guardado
+    ✅ Acción Exitosa
   </div>
 
   <div class="overlay" id="global-loader">
@@ -117,9 +113,10 @@
 
   <div class="app-card">
     
+    <!-- 1. PANTALLA MENÚ PRINCIPAL -->
     <div id="menu-view">
       <div class="header-row">
-        <div><h1>Activaciones Palo Alto</h1><p>Seleccione una Opcion</p></div>
+        <div><h1>Palo Alto App</h1><p>Seleccione Operación</p></div>
         <button class="icon-btn" style="width: 40px; height: 40px; background: var(--bg-3); border: 1px solid var(--borde-2); border-radius: 10px; color: var(--texto-2); cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="toggleTheme()">
           <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         </button>
@@ -127,50 +124,78 @@
 
       <button class="menu-btn" onclick="abrirFlujo('regular')">
         <div class="menu-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
-        <div class="menu-text"><h3>Activación de SimCard Cambaceo</h3><p>Registro de activaciones del personal de cambaceo.</p></div>
+        <div class="menu-text"><h3>Línea Nueva (Guerrilla)</h3><p>Registro individual súper rápido sin fotos.</p></div>
+      </button>
+
+      <button class="menu-btn" onclick="abrirFlujo('portabilidad')">
+        <div class="menu-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg></div>
+        <div class="menu-text"><h3>Portabilidad</h3><p>Captura de datos completos con código CIV.</p></div>
       </button>
 
       <button class="menu-btn" onclick="abrirFlujo('rutas')">
         <div class="menu-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
-        <div class="menu-text"><h3>Activación de SimCard Rutas</h3><p>Registro de activaciones del personal de rutas.</p></div>
+        <div class="menu-text"><h3>Venta de Rutas</h3><p>Registro masivo con escáner en ráfaga.</p></div>
       </button>
     </div>
 
+    <!-- 2. FLUJO REGULAR (LÍNEA NUEVA) -->
     <div id="regular-view" style="display: none;">
       <div class="header-back">
         <button class="btn-back" onclick="volverMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-        <div><h2 style="font-size: 16px;">Activación de SimCard Cambaceo</h2></div>
+        <div><h2 style="font-size: 16px;">Línea Nueva</h2></div>
       </div>
-
       <div id="reg-step-1">
-        <div class="campo"><label>Código Maestro</label><input type="text" id="cod-maestro" placeholder="Ej: xxxx" inputmode="numeric"></div>
-        <button class="btn btn-primary" onclick="buscarVendedor()">Verificar Código</button>
+        <div class="campo"><label>Código Maestro</label><input type="text" id="cod-maestro" placeholder="Ej: 31892438" inputmode="numeric"></div>
+        <button class="btn btn-primary" onclick="buscarVendedor('regular')">Verificar Código</button>
       </div>
-
       <div id="reg-step-2" style="display: none;">
         <div class="vendedor-badge"><h3 id="v-nombre">---</h3><p><strong>Canal:</strong> <span id="v-canal">---</span></p><p><strong>Zona:</strong> <span id="v-zona">---</span></p></div>
-        
         <div class="campo">
-          <label>1. Número de SimCard</label>
+          <label>1. Número de SIM (Escáner)</label>
           <div style="display: flex; gap: 8px;">
-            <input type="text" id="reg-sim" placeholder="Toca el botón para escanear 👉" readonly style="flex: 1; background: var(--bg-4); font-family: 'JetBrains Mono'; font-size: 12px; color: var(--texto);">
-            <button class="btn btn-secondary" style="width: auto; margin-top: 0; border: 1px solid var(--naranja); color: var(--naranja); padding: 0 15px;" onclick="abrirScannerVivo('regular')">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-            </button>
+            <input type="text" id="reg-sim" placeholder="Toca el botón 👉" readonly style="flex: 1; background: var(--bg-4); font-family: 'JetBrains Mono'; font-size: 12px; color: var(--texto);">
+            <button class="btn btn-secondary" style="width: auto; margin-top: 0; border: 1px solid var(--naranja); color: var(--naranja); padding: 0 15px;" onclick="abrirScannerVivo('regular')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
           </div>
         </div>
-
-        <div class="campo">
-          <label>2. Numero de Teléfono Asignado (8 dígitos)</label>
-          <input type="text" id="reg-tel" placeholder="Ej: 3312xxxx" inputmode="numeric">
-        </div>
-
+        <div class="campo"><label>2. Teléfono Asignado (8 dígitos)</label><input type="text" id="reg-tel" placeholder="Ej: 98765432" inputmode="numeric"></div>
         <button class="btn btn-primary" id="btn-save-reg" onclick="guardarRegular()" disabled>Registrar Activación</button>
         <button class="btn btn-secondary" onclick="cancelarRegular()">Cancelar</button>
       </div>
       <div class="msg-error" id="error-box-reg"></div>
     </div>
 
+    <!-- NUEVO: FLUJO PORTABILIDAD -->
+    <div id="portabilidad-view" style="display: none;">
+      <div class="header-back">
+        <button class="btn-back" onclick="volverMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+        <div><h2 style="font-size: 16px;">Portabilidad</h2></div>
+      </div>
+      <div id="port-step-1">
+        <div class="campo"><label>Código Maestro</label><input type="text" id="port-cod-maestro" placeholder="Ej: 31892438" inputmode="numeric"></div>
+        <button class="btn btn-primary" onclick="buscarVendedor('portabilidad')">Verificar Código</button>
+      </div>
+      <div id="port-step-2" style="display: none;">
+        <div class="vendedor-badge"><h3 id="vp-nombre">---</h3><p><strong>Canal:</strong> <span id="vp-canal">---</span></p><p><strong>Zona:</strong> <span id="vp-zona">---</span></p></div>
+        <div class="campo">
+          <label>1. Número de SIM (Escáner)</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="port-sim" placeholder="Toca el botón 👉" readonly style="flex: 1; background: var(--bg-4); font-family: 'JetBrains Mono'; font-size: 12px; color: var(--texto);">
+            <button class="btn btn-secondary" style="width: auto; margin-top: 0; border: 1px solid var(--naranja); color: var(--naranja); padding: 0 15px;" onclick="abrirScannerVivo('portabilidad')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <div class="campo" style="flex: 1;"><label>2. Núm a Portar</label><input type="text" id="port-num" placeholder="8 dígitos" inputmode="numeric"></div>
+          <div class="campo" style="flex: 1;"><label>3. Núm Alterno</label><input type="text" id="port-alt" placeholder="8 dígitos" inputmode="numeric"></div>
+        </div>
+        <div class="campo"><label>4. Código CIV</label><input type="text" id="port-civ" placeholder="Ej: 123456" inputmode="text"></div>
+        
+        <button class="btn btn-primary" id="btn-save-port" onclick="guardarPortabilidad()" disabled>Registrar Portabilidad</button>
+        <button class="btn btn-secondary" onclick="cancelarPortabilidad()">Cancelar</button>
+      </div>
+      <div class="msg-error" id="error-box-port"></div>
+    </div>
+
+    <!-- PANTALLA ÉXITO (COMPARTIDA) -->
     <div id="success-view" style="display: none;">
       <div class="check-circle"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
       <h2 style="font-size: 18px; font-weight: 700;">¡Registro Guardado!</h2>
@@ -178,16 +203,16 @@
         <div style="margin-bottom: 8px;"><strong>SIM:</strong> <span id="out-sim"></span></div>
         <div><strong>TEL:</strong> <span id="out-tel"></span></div>
       </div>
-      <button class="btn btn-primary" onclick="nuevaVentaRegular()">Nueva Activación</button>
+      <button class="btn btn-primary" id="btn-new-shared">Nueva Operación</button>
       <button class="btn btn-secondary" onclick="volverMenu()">Menú Principal</button>
     </div>
 
+    <!-- 4. FLUJO RUTAS (ESCÁNER EN VIVO) -->
     <div id="rutas-view" style="display: none;">
       <div class="header-back">
         <button class="btn-back" onclick="volverMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-        <div><h2 style="font-size: 16px;">Activación de SimCard Rutas</h2></div>
+        <div><h2 style="font-size: 16px;">Escáner de Rutas</h2></div>
       </div>
-
       <div id="rutas-form">
         <div style="display: flex; gap: 10px;">
           <div class="campo" style="flex: 1;"><label>Zona</label><select id="ruta-zona" onchange="actualizarRutas()"><option value="">Seleccione...</option><option value="El Paraiso">El Paraíso</option><option value="Olancho">Olancho</option></select></div>
@@ -195,24 +220,18 @@
         </div>
         <div class="campo"><label>Nombre del Negocio</label><input type="text" id="ruta-negocio" placeholder="Ej: Pulpería La Bendición"></div>
         <div class="campo"><label>Número POS (Máx 8 dígitos)</label><input type="text" id="ruta-pos" placeholder="Ingrese el POS" inputmode="numeric"></div>
-
         <hr style="border: none; border-top: 1px solid var(--borde-2); margin: 24px 0;">
-
         <div class="campo">
           <label style="display: flex; justify-content: space-between; align-items: center;">Escáner de Códigos<span id="contador-badge" style="background: var(--naranja); color: white; padding: 2px 8px; border-radius: 10px; font-size: 10px;">0 SIMs</span></label>
-          
-          <button class="btn btn-secondary" style="border: 1px solid var(--naranja); color: var(--naranja);" onclick="abrirScannerVivo('rutas')">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-            Escanear SIM
-          </button>
+          <button class="btn btn-secondary" style="border: 1px solid var(--naranja); color: var(--naranja);" onclick="abrirScannerVivo('rutas')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 5px;"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg>Abrir Cámara</button>
           <div class="sim-list" id="lista-sims"></div>
         </div>
-
         <button class="btn btn-primary" id="btn-save-rutas" disabled onclick="enviarListaMasiva()">Guardar <span id="btn-count"></span> SIMs</button>
       </div>
       <div class="msg-error" id="error-box-rutas"></div>
     </div>
 
+    <!-- PANTALLA RESUMEN RUTAS -->
     <div id="resumen-rutas-view" style="display: none;">
       <h2 style="font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 24px;">Resumen de Operación</h2>
       <div class="status-badge status-success" id="bloque-exito" style="padding: 12px; border-radius: var(--radio); font-weight: 600; text-align: center; margin-bottom: 16px; background: var(--verde-dim); color: var(--verde); border: 1px solid rgba(22,163,74,0.2);">✅ <span id="resumen-exitosas">0 guardadas con éxito</span></div>
@@ -227,6 +246,7 @@
   // ==========================================
   // CONFIGURACIÓN DE LA API
   // ==========================================
+  // REEMPLAZA ESTA URL POR LA TUYA RECIÉN GENERADA
   const API_URL = "https://script.google.com/macros/s/AKfycbwfkIIgV2n-KCI1RjpvKnavg4_sjYjhjmtlBZrpU8c5bpeGNqhvtsO7wW19SXh5UjOW/exec";
 
   let sessionData = {};
@@ -266,130 +286,130 @@
     document.getElementById('menu-view').style.display = 'none';
     
     if (flujo === 'regular') {
-      // 1. Limpieza radical del flujo Guerrilla
-      document.getElementById('reg-step-2').style.display = 'none'; 
-      document.getElementById('reg-step-1').style.display = 'block';
-      document.getElementById('cod-maestro').value = ""; 
-      document.getElementById('reg-sim').value = ""; 
-      document.getElementById('reg-tel').value = "";
-      document.getElementById('error-box-reg').style.display = 'none';
-      document.getElementById('btn-save-reg').disabled = true; 
-      sessionData = {}; // Destruye la memoria del vendedor anterior
-      
+      document.getElementById('reg-step-2').style.display = 'none'; document.getElementById('reg-step-1').style.display = 'block';
+      document.getElementById('cod-maestro').value = ""; document.getElementById('reg-sim').value = ""; document.getElementById('reg-tel').value = "";
+      document.getElementById('error-box-reg').style.display = 'none'; document.getElementById('btn-save-reg').disabled = true; sessionData = {};
       document.getElementById('regular-view').style.display = 'block';
-    } else {
-      // 2. Limpieza radical del flujo Rutas
-      document.getElementById('ruta-negocio').value = ""; 
-      document.getElementById('ruta-pos').value = ""; 
-      document.getElementById('ruta-zona').value = "";
-      document.getElementById('ruta-numero').innerHTML = '<option value="">Seleccione...</option>';
-      document.getElementById('ruta-numero').disabled = true;
-      document.getElementById('error-box-rutas').style.display = 'none';
-      simsEscaneados = []; // Destruye la lista de chips anterior
-      actualizarListaSims();
-      
+    } 
+    else if (flujo === 'portabilidad') {
+      document.getElementById('port-step-2').style.display = 'none'; document.getElementById('port-step-1').style.display = 'block';
+      document.getElementById('port-cod-maestro').value = ""; document.getElementById('port-sim').value = ""; 
+      document.getElementById('port-num').value = ""; document.getElementById('port-alt').value = ""; document.getElementById('port-civ').value = "";
+      document.getElementById('error-box-port').style.display = 'none'; document.getElementById('btn-save-port').disabled = true; sessionData = {};
+      document.getElementById('portabilidad-view').style.display = 'block';
+    }
+    else {
+      document.getElementById('ruta-negocio').value = ""; document.getElementById('ruta-pos').value = ""; document.getElementById('ruta-zona').value = "";
+      document.getElementById('ruta-numero').innerHTML = '<option value="">Seleccione...</option>'; document.getElementById('ruta-numero').disabled = true;
+      document.getElementById('error-box-rutas').style.display = 'none'; simsEscaneados = []; actualizarListaSims();
       document.getElementById('rutas-view').style.display = 'block';
     }
   }
 
   function volverMenu() {
-    document.getElementById('regular-view').style.display = 'none'; document.getElementById('rutas-view').style.display = 'none';
+    document.getElementById('regular-view').style.display = 'none'; document.getElementById('rutas-view').style.display = 'none'; document.getElementById('portabilidad-view').style.display = 'none';
     document.getElementById('success-view').style.display = 'none'; document.getElementById('resumen-rutas-view').style.display = 'none';
     document.getElementById('menu-view').style.display = 'block';
   }
 
   // ==========================================
-  // COMUNICACIÓN CON LA API DE GOOGLE (BLINDADA)
+  // COMUNICACIÓN CON LA API DE GOOGLE (BLINDADA ANTI-CACHÉ)
   // ==========================================
   async function llamarAPI(accion, payload) {
     try {
-      // 1. Engañamos al navegador agregando la hora exacta a la URL 
-      // para que crea que siempre es una dirección diferente y no use memoria.
       const urlSinCache = API_URL + "?t=" + new Date().getTime();
-
       const response = await fetch(urlSinCache, {
-        method: "POST", 
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ accion: accion, payload: payload }),
-        // 2. Le ordenamos explícitamente al navegador que no guarde el historial de redirecciones de Google
-        cache: "no-store",
-        redirect: "follow"
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ accion: accion, payload: payload }), cache: "no-store", redirect: "follow"
       });
-      
       const textoRespuesta = await response.text(); 
-      
-      try { 
-        return JSON.parse(textoRespuesta); 
-      } catch (e) { 
-        console.error("HTML devuelto por Google:", textoRespuesta);
-        alert("Bloqueo temporal: Tu navegador intentó usar un caché caducado. Intenta de nuevo."); 
-        return { exito: false, mensaje: "Error de formato." }; 
-      }
-    } catch (err) { 
-      alert("Falla de red: No se pudo alcanzar el servidor de Google."); 
-      return { exito: false, mensaje: err.message }; 
-    }
+      try { return JSON.parse(textoRespuesta); } 
+      catch (e) { alert("Bloqueo temporal: Tu navegador intentó usar un caché caducado."); return { exito: false, mensaje: "Error de formato." }; }
+    } catch (err) { alert("Falla de red: No se pudo alcanzar el servidor."); return { exito: false, mensaje: err.message }; }
   }
 
   // ==========================================
-  // LÓGICA DE ACTIVACIÓN REGULAR (Fase 2)
+  // BÚSQUEDA COMPARTIDA DE VENDEDOR
   // ==========================================
-  async function buscarVendedor() {
-    const cod = document.getElementById('cod-maestro').value.trim();
+  async function buscarVendedor(origen) {
+    const codInput = origen === 'regular' ? 'cod-maestro' : 'port-cod-maestro';
+    const errBox = origen === 'regular' ? 'error-box-reg' : 'error-box-port';
+    const cod = document.getElementById(codInput).value.trim();
     if(!cod) return;
-    setLoader(true, "Consultando base..."); document.getElementById('error-box-reg').style.display = 'none';
+    
+    setLoader(true, "Consultando base..."); document.getElementById(errBox).style.display = 'none';
     try {
       const res = await llamarAPI("buscarVendedor", { codigo: cod });
       setLoader(false);
       if(res.encontrado) {
         sessionData = res;
-        document.getElementById('v-nombre').innerText = res.vendedor; document.getElementById('v-canal').innerText = res.canal; document.getElementById('v-zona').innerText = res.zona;
-        document.getElementById('reg-step-1').style.display = 'none'; document.getElementById('reg-step-2').style.display = 'block';
+        if(origen === 'regular') {
+          document.getElementById('v-nombre').innerText = res.vendedor; document.getElementById('v-canal').innerText = res.canal; document.getElementById('v-zona').innerText = res.zona;
+          document.getElementById('reg-step-1').style.display = 'none'; document.getElementById('reg-step-2').style.display = 'block';
+        } else {
+          document.getElementById('vp-nombre').innerText = res.vendedor; document.getElementById('vp-canal').innerText = res.canal; document.getElementById('vp-zona').innerText = res.zona;
+          document.getElementById('port-step-1').style.display = 'none'; document.getElementById('port-step-2').style.display = 'block';
+        }
       } else {
-        document.getElementById('error-box-reg').innerText = res.mensaje; document.getElementById('error-box-reg').style.display = 'block';
+        document.getElementById(errBox).innerText = res.mensaje; document.getElementById(errBox).style.display = 'block';
       }
     } catch(err) { setLoader(false); alert("Error conectando al servidor."); }
   }
 
-  // Validar campos de SIM y Teléfono
-  document.getElementById('reg-tel').addEventListener('input', function (e) {
-    let valor = e.target.value.replace(/\D/g, ''); if (valor.length > 8) valor = valor.slice(0, 8); e.target.value = valor;
-    validarFormularioRegular();
-  });
-
+  // ==========================================
+  // LÓGICA DE ACTIVACIÓN REGULAR (LÍNEA NUEVA)
+  // ==========================================
+  document.getElementById('reg-tel').addEventListener('input', function (e) { let v = e.target.value.replace(/\D/g, ''); if (v.length > 8) v = v.slice(0, 8); e.target.value = v; validarFormularioRegular(); });
   function validarFormularioRegular() {
-    const sim = document.getElementById('reg-sim').value; const tel = document.getElementById('reg-tel').value; const btn = document.getElementById('btn-save-reg');
-    if (sim.length >= 15 && tel.length === 8) { btn.disabled = false; } else { btn.disabled = true; }
+    const sim = document.getElementById('reg-sim').value; const tel = document.getElementById('reg-tel').value; 
+    document.getElementById('btn-save-reg').disabled = !(sim.length >= 15 && tel.length === 8);
   }
 
   async function guardarRegular() {
     setLoader(true, "Registrando activación...");
-    const payload = { 
-      codigoMaestro: document.getElementById('cod-maestro').value.trim(), vendedor: sessionData.vendedor, zona: sessionData.zona, canal: sessionData.canal, 
-      sim: document.getElementById('reg-sim').value, telefono: document.getElementById('reg-tel').value 
-    };
+    const payload = { codigoMaestro: document.getElementById('cod-maestro').value.trim(), vendedor: sessionData.vendedor, zona: sessionData.zona, canal: sessionData.canal, sim: document.getElementById('reg-sim').value, telefono: document.getElementById('reg-tel').value };
     try {
       const res = await llamarAPI("procesarActivacion", payload);
       setLoader(false);
       if(res.exito) {
         document.getElementById('regular-view').style.display = 'none'; document.getElementById('success-view').style.display = 'block';
         document.getElementById('out-sim').innerText = res.sim; document.getElementById('out-tel').innerText = res.telefono;
+        document.getElementById('btn-new-shared').onclick = () => { abrirFlujo('regular'); document.getElementById('success-view').style.display = 'none'; };
       } else {
         document.getElementById('error-box-reg').innerText = res.mensaje; document.getElementById('error-box-reg').style.display = 'block';
       }
-    } catch(err) { setLoader(false); alert("Error conectando al servidor."); }
+    } catch(err) { setLoader(false); alert("Error de red."); }
+  }
+  function cancelarRegular() { abrirFlujo('regular'); }
+
+  // ==========================================
+  // LÓGICA DE PORTABILIDAD
+  // ==========================================
+  document.getElementById('port-num').addEventListener('input', function (e) { let v = e.target.value.replace(/\D/g, ''); if (v.length > 8) v = v.slice(0, 8); e.target.value = v; validarFormularioPort(); });
+  document.getElementById('port-alt').addEventListener('input', function (e) { let v = e.target.value.replace(/\D/g, ''); if (v.length > 8) v = v.slice(0, 8); e.target.value = v; validarFormularioPort(); });
+  document.getElementById('port-civ').addEventListener('input', function (e) { validarFormularioPort(); });
+
+  function validarFormularioPort() {
+    const sim = document.getElementById('port-sim').value; const num = document.getElementById('port-num').value; const alt = document.getElementById('port-alt').value; const civ = document.getElementById('port-civ').value.trim();
+    document.getElementById('btn-save-port').disabled = !(sim.length >= 15 && num.length === 8 && alt.length === 8 && civ.length > 0);
   }
 
-  function cancelarRegular() {
-    document.getElementById('reg-step-2').style.display = 'none'; document.getElementById('reg-step-1').style.display = 'block';
-    document.getElementById('cod-maestro').value = ""; document.getElementById('reg-sim').value = ""; document.getElementById('reg-tel').value = "";
-    document.getElementById('btn-save-reg').disabled = true; sessionData = {};
+  async function guardarPortabilidad() {
+    setLoader(true, "Registrando portabilidad...");
+    const payload = { codigoMaestro: document.getElementById('port-cod-maestro').value.trim(), vendedor: sessionData.vendedor, zona: sessionData.zona, canal: sessionData.canal, sim: document.getElementById('port-sim').value, numPortar: document.getElementById('port-num').value, numAlterno: document.getElementById('port-alt').value, civ: document.getElementById('port-civ').value };
+    try {
+      const res = await llamarAPI("procesarPortabilidad", payload);
+      setLoader(false);
+      if(res.exito) {
+        document.getElementById('portabilidad-view').style.display = 'none'; document.getElementById('success-view').style.display = 'block';
+        document.getElementById('out-sim').innerText = res.sim; document.getElementById('out-tel').innerText = res.telefono;
+        document.getElementById('btn-new-shared').onclick = () => { abrirFlujo('portabilidad'); document.getElementById('success-view').style.display = 'none'; };
+      } else {
+        document.getElementById('error-box-port').innerText = res.mensaje; document.getElementById('error-box-port').style.display = 'block';
+      }
+    } catch(err) { setLoader(false); alert("Error de red."); }
   }
-
-  function nuevaVentaRegular() {
-    document.getElementById('success-view').style.display = 'none'; document.getElementById('regular-view').style.display = 'block';
-    document.getElementById('reg-sim').value = ""; document.getElementById('reg-tel').value = ""; document.getElementById('btn-save-reg').disabled = true;
-  }
+  function cancelarPortabilidad() { abrirFlujo('portabilidad'); }
 
   // ==========================================
   // LÓGICA DE RUTAS
@@ -403,12 +423,12 @@
     for(let i = inicio; i <= fin; i++) { comboRutas.innerHTML += `<option value="Ruta ${i}">Ruta ${i}</option>`; }
   }
 
-  document.getElementById('ruta-pos').addEventListener('input', function (e) { let valor = e.target.value.replace(/\D/g, ''); if (valor.length > 8) valor = valor.slice(0, 8); e.target.value = valor; });
-  document.getElementById('ruta-negocio').addEventListener('input', function (e) { let start = e.target.selectionStart; let end = e.target.selectionEnd; e.target.value = e.target.value.toLowerCase().replace(/(?:^|\s)\S/g, function(letra) { return letra.toUpperCase(); }); e.target.setSelectionRange(start, end); });
+  document.getElementById('ruta-pos').addEventListener('input', function (e) { let v = e.target.value.replace(/\D/g, ''); if (v.length > 8) v = v.slice(0, 8); e.target.value = v; });
+  document.getElementById('ruta-negocio').addEventListener('input', function (e) { let s = e.target.selectionStart; let en = e.target.selectionEnd; e.target.value = e.target.value.toLowerCase().replace(/(?:^|\s)\S/g, function(l) { return l.toUpperCase(); }); e.target.setSelectionRange(s, en); });
 
   async function enviarListaMasiva() {
     if(!document.getElementById('ruta-zona').value || !document.getElementById('ruta-numero').value || !document.getElementById('ruta-negocio').value || !document.getElementById('ruta-pos').value) {
-      const err = document.getElementById('error-box-rutas'); err.innerText = "Complete Zona, Ruta, Negocio y POS antes de procesar."; err.style.display = 'block'; return;
+      const err = document.getElementById('error-box-rutas'); err.innerText = "Complete Zona, Ruta, Negocio y POS."; err.style.display = 'block'; return;
     }
     document.getElementById('error-box-rutas').style.display = 'none'; setLoader(true, `Enviando ${simsEscaneados.length} SIMs...`);
     const payload = { zona: document.getElementById('ruta-zona').value, ruta: document.getElementById('ruta-numero').value, negocio: document.getElementById('ruta-negocio').value.trim(), pos: document.getElementById('ruta-pos').value.trim(), sims: simsEscaneados };
@@ -424,13 +444,12 @@
           res.fallidas.forEach(falla => { listaFallidas.innerHTML += `<div style="color:var(--rojo); font-family:'JetBrains Mono'; font-size:11px; margin-bottom:4px;">💳 ${falla.sim} - ${falla.error}</div>`; });
         } else { bloqueFallidas.style.display = 'none'; }
       } else { document.getElementById('error-box-rutas').innerText = res.mensaje; document.getElementById('error-box-rutas').style.display = 'block'; }
-    } catch(err) { setLoader(false); alert("Error conectando al servidor."); }
+    } catch(err) { setLoader(false); alert("Error de red."); }
   }
-
-  function nuevaRutaMasiva() { document.getElementById('ruta-negocio').value = ""; document.getElementById('ruta-pos').value = ""; simsEscaneados = []; actualizarListaSims(); document.getElementById('resumen-rutas-view').style.display = 'none'; document.getElementById('rutas-view').style.display = 'block'; }
+  function nuevaRutaMasiva() { abrirFlujo('rutas'); document.getElementById('resumen-rutas-view').style.display = 'none'; }
 
   // ==========================================
-  // ESCÁNER EN VIVO (MÚLTIPLE)
+  // ESCÁNER EN VIVO MÚLTIPLE
   // ==========================================
   function abrirScannerVivo(modo) {
     modoEscanerActivo = modo; 
@@ -441,16 +460,16 @@
         if (/^89\d{15,19}$/.test(decodedText)) {
           if (decodedText !== ultimoSimEscaneado) {
             ultimoSimEscaneado = decodedText;
-            if (modoEscanerActivo === 'regular') {
+            
+            if (modoEscanerActivo === 'regular' || modoEscanerActivo === 'portabilidad') {
               playBeep();
-              document.getElementById('reg-sim').value = decodedText;
-              validarFormularioRegular();
-              mostrarToast("✅ SIM Capturado", "#16A34A");
-              cerrarScannerVivo(); 
+              if(modoEscanerActivo === 'regular') { document.getElementById('reg-sim').value = decodedText; validarFormularioRegular(); }
+              else { document.getElementById('port-sim').value = decodedText; validarFormularioPort(); }
+              mostrarToast("✅ SIM Capturado", "#16A34A"); cerrarScannerVivo(); 
             } else {
               if (!simsEscaneados.includes(decodedText)) {
                 playBeep(); simsEscaneados.push(decodedText); actualizarListaSims();
-                const ultimos4 = decodedText.slice(-4); mostrarToast(`✅ Registrado: ...${ultimos4}`, "#16A34A");
+                mostrarToast(`✅ Registrado: ...${decodedText.slice(-4)}`, "#16A34A");
                 const frame = document.getElementById('scanner-frame'); frame.style.borderColor = "#FFF"; frame.style.backgroundColor = "rgba(255,255,255,0.3)";
                 setTimeout(() => { frame.style.borderColor = "#00FF00"; frame.style.backgroundColor = "transparent"; ultimoSimEscaneado = ""; }, 800);
               } else {
