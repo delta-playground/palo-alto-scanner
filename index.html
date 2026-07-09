@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>App Vendedores | Palo Alto</title>
+  <title>Activaciones de SimCard | Palo Alto</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
@@ -116,7 +116,7 @@
     <!-- 1. PANTALLA MENÚ PRINCIPAL -->
     <div id="menu-view">
       <div class="header-row">
-        <div><h1>Palo Alto App</h1><p>Seleccione Operación</p></div>
+        <div><h1>Activaciones Palo Alto</h1><p>Seleccione la Opcion</p></div>
         <button class="icon-btn" style="width: 40px; height: 40px; background: var(--bg-3); border: 1px solid var(--borde-2); border-radius: 10px; color: var(--texto-2); cursor: pointer; display: flex; align-items: center; justify-content: center;" onclick="toggleTheme()">
           <svg id="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         </button>
@@ -124,17 +124,17 @@
 
       <button class="menu-btn" onclick="abrirFlujo('regular')">
         <div class="menu-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
-        <div class="menu-text"><h3>Línea Nueva (Guerrilla)</h3><p>Registro individual súper rápido sin fotos.</p></div>
+        <div class="menu-text"><h3>Activaciones de Guerrilla</h3><p>Registro de activaciones de Simcard de guerrilla.</p></div>
       </button>
 
       <button class="menu-btn" onclick="abrirFlujo('portabilidad')">
         <div class="menu-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg></div>
-        <div class="menu-text"><h3>Portabilidad</h3><p>Captura de datos completos con código CIV.</p></div>
+        <div class="menu-text"><h3>Registro de Portabilidades</h3><p>Registro de Portabilidades de guerrilla.</p></div>
       </button>
 
       <button class="menu-btn" onclick="abrirFlujo('rutas')">
         <div class="menu-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
-        <div class="menu-text"><h3>Venta de Rutas</h3><p>Registro masivo con escáner en ráfaga.</p></div>
+        <div class="menu-text"><h3>Activaciones de Rutas</h3><p>Registro de activaciones de Simcard de rutas.</p></div>
       </button>
     </div>
 
@@ -142,10 +142,10 @@
     <div id="regular-view" style="display: none;">
       <div class="header-back">
         <button class="btn-back" onclick="volverMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-        <div><h2 style="font-size: 16px;">Línea Nueva</h2></div>
+        <div><h2 style="font-size: 16px;">Activaciones de Guerrilla</h2></div>
       </div>
       <div id="reg-step-1">
-        <div class="campo"><label>Código Maestro</label><input type="text" id="cod-maestro" placeholder="Ej: 31892438" inputmode="numeric"></div>
+        <div class="campo"><label>Digite su Código Maestro</label><input type="text" id="cod-maestro" placeholder="Ej: xxxx" inputmode="numeric"></div>
         <button class="btn btn-primary" onclick="buscarVendedor('regular')">Verificar Código</button>
       </div>
       <div id="reg-step-2" style="display: none;">
@@ -157,7 +157,7 @@
             <button class="btn btn-secondary" style="width: auto; margin-top: 0; border: 1px solid var(--naranja); color: var(--naranja); padding: 0 15px;" onclick="abrirScannerVivo('regular')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h3"></path><path d="M4 17v3h3"></path><path d="M20 7V4h-3"></path><path d="M20 17v3h-3"></path><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
           </div>
         </div>
-        <div class="campo"><label>2. Teléfono Asignado (8 dígitos)</label><input type="text" id="reg-tel" placeholder="Ej: 98765432" inputmode="numeric"></div>
+        <div class="campo"><label>2. Teléfono Asignado (8 dígitos)</label><input type="text" id="reg-tel" placeholder="Ej: 3269xxxx" inputmode="numeric"></div>
         <button class="btn btn-primary" id="btn-save-reg" onclick="guardarRegular()" disabled>Registrar Activación</button>
         <button class="btn btn-secondary" onclick="cancelarRegular()">Cancelar</button>
       </div>
@@ -171,7 +171,7 @@
         <div><h2 style="font-size: 16px;">Portabilidad</h2></div>
       </div>
       <div id="port-step-1">
-        <div class="campo"><label>Código Maestro</label><input type="text" id="port-cod-maestro" placeholder="Ej: 31892438" inputmode="numeric"></div>
+        <div class="campo"><label>Digite su Código Maestro</label><input type="text" id="port-cod-maestro" placeholder="Ej: xxxx" inputmode="numeric"></div>
         <button class="btn btn-primary" onclick="buscarVendedor('portabilidad')">Verificar Código</button>
       </div>
       <div id="port-step-2" style="display: none;">
@@ -211,7 +211,7 @@
     <div id="rutas-view" style="display: none;">
       <div class="header-back">
         <button class="btn-back" onclick="volverMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-        <div><h2 style="font-size: 16px;">Escáner de Rutas</h2></div>
+        <div><h2 style="font-size: 16px;">Activaciones de Rutas</h2></div>
       </div>
       <div id="rutas-form">
         <div style="display: flex; gap: 10px;">
